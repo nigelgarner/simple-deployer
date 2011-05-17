@@ -77,7 +77,7 @@ if(version.endsWith(devBuildSuffix)) {
 }
 
 def archiveDir = "${config.global.application.archive.base}/${formalVersion}"
-def backupDir = "${archiveDir}/backup"
+def backupDir = "${environment.installation.backup}/${formalVersion}"
 def deployableFile = "${archiveDir}/${environment.artifact.id}-${version}.${environment.artifact.type}"
 
 // -----------------------------------------------------
@@ -105,9 +105,8 @@ if(environment.artifact.download) {
 // -- Shutdown ------
 // Shutdown the service
 println "Stopping Service ${environment.tomcat.service.name}"
-ant.exec(executable:"${tomcat.executable}") {
-	arg(line:"//SS//${environment.tomcat.service.name}")
-}
+println "Executing ${environment.tomcat.stop}"
+"${environment.tomcat.stop}".execute()
 
 // -- Backup ------
 println "Backing up existing deployment"
@@ -129,7 +128,6 @@ ant.unwar(src:"${deployableFile}", dest:"${installDir}")
 
 // -- Start ------
 // Start the service
-println "Stopping Service ${environment.tomcat.service.name}"
-ant.exec(executable:"${tomcat.executable}") {
-	arg(line:"//RS//${environment.tomcat.service.name}")
-}
+println "Starting Service ${environment.tomcat.service.name}"
+println "Executing ${environment.tomcat.start}"
+"${environment.tomcat.start}".execute()
