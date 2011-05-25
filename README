@@ -1,0 +1,13 @@
+# To Build
+In order to build this deployer into its executable form then you will need Groovy installed with GROOVY_HOME environmnent variable set. 
+
+Once thats inplace it can be packaged using:
+groovy GroovyWrapper -c -m Deployer
+
+This will produce an executable jar file that can be run with
+java -jar Deployer.jar <args>
+
+Or, if you prefer then it can be executed in its exploded form without being built into a jar by using:
+groovy Deployer
+
+An example of the Environment.groovy configuration file will follow shortly
