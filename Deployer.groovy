@@ -31,11 +31,12 @@ def ant = new AntBuilder()
 // -----------------------------------------------------
 // --------------- Command Line Usage  -----------------
 // -----------------------------------------------------
-def cli = new CliBuilder(usage: 'deployer.groovy -[h] [environment] [version]')
+def cli = new CliBuilder(usage: 'deployer.groovy -[ho] [environment] [version]')
 
 // Create the list of options.
 cli.with {
 	h longOpt: 'help', 'Show usage information'
+	o longOpt: 'offline', 'Work offline'
 }
 
 // Parse the passed command line args
@@ -79,6 +80,14 @@ if(version.endsWith(devBuildSuffix)) {
 def archiveDir = "${config.global.application.archive.base}/${formalVersion}"
 def backupDir = "${environment.installation.backup}/${formalVersion}"
 def deployableFile = "${archiveDir}/${environment.artifact.id}-${version}.${environment.artifact.type}"
+def offline 
+
+if(options.o) {
+	offline = true
+} else {
+	offline = !environment.artifact.download 
+} 
+
 
 // -----------------------------------------------------
 // --------------- Start doing some work ---------------  
@@ -89,9 +98,10 @@ ant.mkdir(dir:"${archiveDir}")
 
 // -- Download ------
 // Check if the file is to be downloaded
-if(environment.artifact.download) {
-	// TODO Switch to Grape?
-	//	groovy.grape.Grape.grab([group:"${groupId}", module:"${artifactId}", version:"${version}"])
+if(!offline) {
+
+	// TODO Switch to Grape? - No as it downloads full dependencies and not just that artifact. Need to check config options
+	//groovy.grape.Grape.grab([group:"${environment.artifact.group}", module:"${environment.artifact.id}", version:"${version}", ext:"war"])
 	
 	// Convert the maven groupId format to a url style
 	def groupUrlFormat = "${environment.artifact.group}".tr('.','/')
@@ -99,7 +109,7 @@ if(environment.artifact.download) {
 	def url = "${repository.repo}/${groupUrlFormat}/${environment.artifact.id}/${version}/${environment.artifact.id}-${version}.${environment.artifact.type}"
 	
 	// Fetch the file from and store it in the cache
-	ant.get(src:"${url}", dest:"${archiveDir}", verbose:'true', username:"${repository.username}", password:"${repository.password}")
+//	ant.get(src:"${url}", dest:"${archiveDir}", verbose:'true', username:"${repository.username}", password:"${repository.password}")
 }
 
 // -- Shutdown ------
