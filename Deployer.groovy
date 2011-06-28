@@ -109,7 +109,7 @@ if(!offline) {
 	def url = "${repository.repo}/${groupUrlFormat}/${environment.artifact.id}/${version}/${environment.artifact.id}-${version}.${environment.artifact.type}"
 	
 	// Fetch the file from and store it in the cache
-//	ant.get(src:"${url}", dest:"${archiveDir}", verbose:'true', username:"${repository.username}", password:"${repository.password}")
+	ant.get(src:"${url}", dest:"${archiveDir}", verbose:'true', username:"${repository.username}", password:"${repository.password}")
 }
 
 // -- Shutdown ------
