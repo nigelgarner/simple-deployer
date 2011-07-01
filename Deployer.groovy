@@ -80,6 +80,7 @@ if(version.endsWith(devBuildSuffix)) {
 def archiveDir = "${config.global.application.archive.base}/${formalVersion}"
 def backupDir = "${environment.installation.backup}/${formalVersion}"
 def deployableFile = "${archiveDir}/${environment.artifact.id}-${version}.${environment.artifact.type}"
+
 def offline 
 
 if(options.o) {
@@ -135,6 +136,10 @@ println "Deploying ${deployableFile}"
 ant.mkdir(dir:"${installDir}")
 // Extract the archive
 ant.unwar(src:"${deployableFile}", dest:"${installDir}")
+
+// -- Post Deploy ------
+def postDeployHandler = new PostDeployHandler();
+postDeployHandler.performFiltering environment, installDir
 
 // -- Start ------
 // Start the service

@@ -51,6 +51,7 @@ def ant = new AntBuilder()
 if (opt.c) {
   ant.echo( "Compiling ${scriptFile}" )
   org.codehaus.groovy.tools.FileSystemCompiler.main( [ scriptFile ] as String[] )
+  org.codehaus.groovy.tools.FileSystemCompiler.main( [ "PostDeployHandler.groovy" ] as String[] )
 }
 
 def GROOVY_HOME = new File( System.getenv('GROOVY_HOME') )
@@ -61,6 +62,7 @@ if (!GROOVY_HOME.canRead()) {
 
 ant.jar( destfile: destFile, compress: true, index: true ) {
   fileset( dir: '.', includes: scriptBase + '*.class' )
+  fileset( dir: '.', includes: "PostDeployHandler" + '*.class' )
 
   zipgroupfileset( dir: GROOVY_HOME, includes: 'embeddable/groovy-all-*.jar' )
   zipgroupfileset( dir: GROOVY_HOME, includes: 'lib/ant*.jar' )
